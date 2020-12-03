@@ -7,6 +7,7 @@ This script is a simplified version of the training script in detectron2/tools.
 import os
 import sys
 import itertools
+import register_dataset
 
 # fmt: off
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
@@ -107,6 +108,8 @@ def setup(args):
     """
     Create configs and perform basic setups.
     """
+    print("registering_dataset")
+    register_dataset.main()
     cfg = get_cfg()
     add_detr_config(cfg)
     cfg.merge_from_file(args.config_file)

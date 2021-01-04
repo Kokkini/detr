@@ -27,10 +27,18 @@ class FrozenBatchNorm2d(torch.nn.Module):
 
     def __init__(self, n):
         super(FrozenBatchNorm2d, self).__init__()
-        self.register_buffer("weight", torch.ones(n))
-        self.register_buffer("bias", torch.zeros(n))
-        self.register_buffer("running_mean", torch.zeros(n))
-        self.register_buffer("running_var", torch.ones(n))
+        print("FrozenBatchNorm2d"*10)
+        # # frozen
+        # self.register_buffer("weight", torch.ones(n))
+        # self.register_buffer("bias", torch.zeros(n))
+        # self.register_buffer("running_mean", torch.zeros(n))
+        # self.register_buffer("running_var", torch.ones(n))
+
+        # unfrozen
+        self.register_parameter("weight", torch.ones(n))
+        self.register_parameter("bias", torch.zeros(n))
+        self.register_parameter("running_mean", torch.zeros(n))
+        self.register_parameter("running_var", torch.ones(n))
 
     def _load_from_state_dict(self, state_dict, prefix, local_metadata, strict,
                               missing_keys, unexpected_keys, error_msgs):

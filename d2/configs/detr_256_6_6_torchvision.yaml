@@ -6,7 +6,7 @@ MODEL:
     OFFSET: 0.0
     SIZES: [[32, 64, 128, 256, 512]]
   META_ARCHITECTURE: "Detr"
-  WEIGHTS: "detectron2://ImageNetPretrained/torchvision/R-50.pkl"
+  WEIGHTS: "converted_model.pth" #"detectron2://ImageNetPretrained/torchvision/R-50.pkl"
   PIXEL_MEAN: [123.675, 116.280, 103.530]
   PIXEL_STD: [58.395, 57.120, 57.375]
   MASK_ON: False
@@ -15,25 +15,26 @@ MODEL:
     STRIDE_IN_1X1: False
     OUT_FEATURES: ["res2", "res3", "res4", "res5"]
   DETR:
-    DEC_LAYERS: 6
-    DEEP_SUPERVISION: True
+    DEC_LAYERS: 6 #important
+    DEEP_SUPERVISION: True #important | loss after each decoder layer
     DIM_FEEDFORWARD: 2048
     DROPOUT: 0.1
-    ENC_LAYERS: 6
-    GIOU_WEIGHT: 2.0
+    ENC_LAYERS: 6 #important
+    GIOU_WEIGHT: 2.0 #important
     HIDDEN_DIM: 256
-    L1_WEIGHT: 5.0
+    L1_WEIGHT: 5.0 #important
     NHEADS: 8
-    NO_OBJECT_WEIGHT: 0.1
+    NO_OBJECT_WEIGHT: 0.1 #important
     NUM_CLASSES: 12
-    NUM_OBJECT_QUERIES: 300
-    PRE_NORM: False
+    NUM_OBJECT_QUERIES: 300 #important
+    PRE_NORM: False #can tweak this
   ROI_HEADS:
     NUM_CLASSES: 12
     BATCH_SIZE_PER_IMAGE: 64
 DATASETS:
   TRAIN: ("my_dataset_train",)
   TEST: ("my_dataset_val",)
+OUTPUT_DIR: "./output"
 SOLVER:
   IMS_PER_BATCH: 4
   BASE_LR: 0.0001
@@ -44,7 +45,7 @@ SOLVER:
   WARMUP_ITERS: 10
   WEIGHT_DECAY: 0.0001
   OPTIMIZER: "ADAMW"
-  BACKBONE_MULTIPLIER: 0.1
+  BACKBONE_MULTIPLIER: 0.1 #important
   CLIP_GRADIENTS:
     ENABLED: False
     CLIP_TYPE: "full_model"

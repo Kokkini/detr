@@ -245,7 +245,7 @@ class Detr(nn.Module):
             # useful_indices = np.where(labels_np == num_classes)
             labels_per_image = torch.where(scores_per_image > self.score_thresh_test, labels_per_image, num_classes)
             useful_indices = torch.flatten((labels_per_image!=num_classes).nonzero())
-            print(f"num instances: {useful_indices.size()}")
+            # print(f"num instances: {useful_indices.size()}")
             scores_per_image = torch.index_select(scores_per_image, 0, useful_indices)
             labels_per_image = torch.index_select(labels_per_image, 0, useful_indices)
             box_pred_per_image = torch.index_select(box_pred_per_image, 0, useful_indices)

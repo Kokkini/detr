@@ -95,6 +95,8 @@ class Detr(nn.Module):
         deep_supervision = cfg.MODEL.DETR.DEEP_SUPERVISION
         no_object_weight = cfg.MODEL.DETR.NO_OBJECT_WEIGHT
 
+        self.score_thresh_test = cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST
+
         N_steps = hidden_dim // 2
         d2_backbone = MaskedBackbone(cfg)
         backbone = Joiner(d2_backbone, PositionEmbeddingSine(N_steps, normalize=True))
@@ -231,12 +233,23 @@ class Detr(nn.Module):
         results = []
 
         # For each box we assign the best class or the second best if the best on is `no_object`.
-        scores, labels = F.softmax(box_cls, dim=-1)[:, :, :-1].max(-1)
+        scores, labels = F.softmax(box_cls, dim=-1).max(-1)
+        num_classes = torch.tensor(list(box_cls.size())[-1] - 1).cuda()
+        
 
         for i, (scores_per_image, labels_per_image, box_pred_per_image, image_size) in enumerate(zip(
             scores, labels, box_pred, image_sizes
         )):
             result = Instances(image_size)
+            # labels_per_image_np = labels_per_image.numpy()
+            # useful_indices = np.where(labels_np == num_classes)
+            labels_per_image = torch.where(scores_per_image > self.score_thresh_test, labels_per_image, num_classes)
+            useful_indices = torch.flatten((labels_per_image!=num_classes).nonzero())
+            print(f"num instances: {useful_indices.size()}")
+            scores_per_image = torch.index_select(scores_per_image, 0, useful_indices)
+            labels_per_image = torch.index_select(labels_per_image, 0, useful_indices)
+            box_pred_per_image = torch.index_select(box_pred_per_image, 0, useful_indices)
+            
             result.pred_boxes = Boxes(box_cxcywh_to_xyxy(box_pred_per_image))
 
             result.pred_boxes.scale(scale_x=image_size[1], scale_y=image_size[0])

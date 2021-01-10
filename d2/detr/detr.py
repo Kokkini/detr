@@ -10,7 +10,7 @@ import torch.nn.functional as F
 from scipy.optimize import linear_sum_assignment
 from torch import nn
 
-from detectron2.layers import ShapeSpec
+from detectron2.layers import ShapeSpec, batched_nms
 from detectron2.modeling import META_ARCH_REGISTRY, build_backbone, detector_postprocess
 from detectron2.structures import Boxes, ImageList, Instances, BitMasks, PolygonMasks
 from detectron2.utils.logger import log_first_n
@@ -24,6 +24,7 @@ from models.segmentation import DETRsegm, PostProcessPanoptic, PostProcessSegm
 from util.box_ops import box_cxcywh_to_xyxy, box_xyxy_to_cxcywh
 from util.misc import NestedTensor
 from datasets.coco import convert_coco_poly_to_mask
+
 
 __all__ = ["Detr"]
 
@@ -96,6 +97,7 @@ class Detr(nn.Module):
         no_object_weight = cfg.MODEL.DETR.NO_OBJECT_WEIGHT
 
         self.score_thresh_test = cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST
+        self.nms_thresh = cfg.MODEL.ROI_HEADS.NMS_THRESH_TEST
 
         N_steps = hidden_dim // 2
         d2_backbone = MaskedBackbone(cfg)
@@ -249,6 +251,9 @@ class Detr(nn.Module):
             scores_per_image = torch.index_select(scores_per_image, 0, useful_indices)
             labels_per_image = torch.index_select(labels_per_image, 0, useful_indices)
             box_pred_per_image = torch.index_select(box_pred_per_image, 0, useful_indices)
+
+            keep = batched_nms(box_pred_per_image, scores_per_image, labels_per_image, self.nms_thresh)
+            box_pred_per_image, scores_per_image, labels_per_image = box_pred_per_image[keep], scores_per_image[keep], labels_per_image[keep]
             
             result.pred_boxes = Boxes(box_cxcywh_to_xyxy(box_pred_per_image))
 

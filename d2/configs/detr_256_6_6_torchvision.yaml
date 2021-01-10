@@ -32,6 +32,7 @@ MODEL:
     NUM_CLASSES: 12
     BATCH_SIZE_PER_IMAGE: 64
     SCORE_THRESH_TEST: 0.8
+    NMS_THRESH_TEST: 0.7
 DATASETS:
   TRAIN: ("my_dataset_train",)
   TEST: ("my_dataset_val",)

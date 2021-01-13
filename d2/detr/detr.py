@@ -25,7 +25,6 @@ from util.box_ops import box_cxcywh_to_xyxy, box_xyxy_to_cxcywh
 from util.misc import NestedTensor
 from datasets.coco import convert_coco_poly_to_mask
 
-
 __all__ = ["Detr"]
 
 
@@ -245,17 +244,13 @@ class Detr(nn.Module):
             result = Instances(image_size)
             # labels_per_image_np = labels_per_image.numpy()
             # useful_indices = np.where(labels_np == num_classes)
+            box_pred_per_image = box_cxcywh_to_xyxy(box_pred_per_image)
             labels_per_image = torch.where(scores_per_image > self.score_thresh_test, labels_per_image, num_classes)
-            useful_indices = torch.flatten((labels_per_image!=num_classes).nonzero())
-            # print(f"num instances: {useful_indices.size()}")
-            scores_per_image = torch.index_select(scores_per_image, 0, useful_indices)
-            labels_per_image = torch.index_select(labels_per_image, 0, useful_indices)
-            box_pred_per_image = torch.index_select(box_pred_per_image, 0, useful_indices)
-
+            keep = torch.flatten((labels_per_image!=num_classes).nonzero())
+            box_pred_per_image, scores_per_image, labels_per_image = box_pred_per_image[keep], scores_per_image[keep], labels_per_image[keep]
             keep = batched_nms(box_pred_per_image, scores_per_image, labels_per_image, self.nms_thresh)
             box_pred_per_image, scores_per_image, labels_per_image = box_pred_per_image[keep], scores_per_image[keep], labels_per_image[keep]
-            
-            result.pred_boxes = Boxes(box_cxcywh_to_xyxy(box_pred_per_image))
+            result.pred_boxes = Boxes(box_pred_per_image)
 
             result.pred_boxes.scale(scale_x=image_size[1], scale_y=image_size[0])
             if self.mask_on:

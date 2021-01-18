@@ -12,6 +12,31 @@ from detectron2.data.transforms import TransformGen
 __all__ = ["DetrDatasetMapper"]
 
 
+
+class RandomNoiseAugmentation(T.Augmentation):
+    def my_op(self, image):
+        if np.random.uniform() > 0.5:
+            return image
+        noise_level = np.random.uniform(0,0.2)
+        mask = np.expand_dims((np.random.uniform(size=(image.shape[:2])) < noise_level).astype(np.uint8), -1)
+        noise = np.expand_dims(np.random.choice([0,255], size=image.shape[:2]).astype(np.uint8), -1)
+        return mask*noise + (1-mask)*image
+
+    def get_transform(self, image):        
+        return T.ColorTransform(self.my_op)
+
+class BiggerTextAugmentation(T.Augmentation):
+    def my_op(self, image):
+        if np.random.uniform() > 0.5:
+            return image
+        ker_size = np.random.randint(2,5)
+        kernel = np.ones((ker_size, ker_size), np.uint8)
+        eroded = cv2.erode(image, kernel)
+        return eroded
+
+    def get_transform(self, image):        
+        return T.ColorTransform(self.my_op)
+
 def build_transform_gen(cfg, is_train):
     """
     Create a list of :class:`TransformGen` from config.
@@ -32,10 +57,14 @@ def build_transform_gen(cfg, is_train):
     logger = logging.getLogger(__name__)
     tfm_gens = []
     if is_train:
-        tfm_gens.append(T.RandomFlip())
+        # tfm_gens.append(T.RandomFlip())
+        tfm_gens.append(BiggerTextAugmentation())
+        tfm_gens.append(T.RandomRotation(angle=3))
+        tfm_gens.append(RandomNoiseAugmentation())
     tfm_gens.append(T.ResizeShortestEdge(min_size, max_size, sample_style))
     if is_train:
         logger.info("TransformGens used in training: " + str(tfm_gens))
+        print("TransformGens used in training: " + str(tfm_gens))
     return tfm_gens
 
 

@@ -108,14 +108,14 @@ def setup(args):
     """
     Create configs and perform basic setups.
     """
-    print("registering_dataset")
-    register_dataset.main()
     cfg = get_cfg()
     add_detr_config(cfg)
     cfg.merge_from_file(args.config_file)
     cfg.merge_from_list(args.opts)
     cfg.freeze()
     default_setup(cfg, args)
+    print("registering_dataset")
+    register_dataset.main(data_dir=cfg.MY_ARGS.DATA_DIR, anno_dir=cfg.MY_ARGS.ANNO_DIR)
     return cfg
 
 

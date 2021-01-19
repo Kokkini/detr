@@ -43,7 +43,7 @@ CATEGORIES = [
 
 CATEGORY_TO_ID = dict([(cat, id) for id, cat in enumerate(CATEGORIES)] )
 
-def main():
+def main(data_dir, anno_dir):
   def get_all_anno(value, key, scale):
     res = []
     if type(value) == list:
@@ -142,13 +142,10 @@ def main():
           raise ValueError(f"bbox_mode {a['bbox_mode']} not supported")
     return anno
 
-  data_dir = "/content/drive/MyDrive/Colab Notebooks/idris-teacher-assistant/detection_data_with_qa_labels"
-  # data_dir = "/content/drive/MyDrive/Colab Notebooks/idris-teacher-assistant/idris_samples"
-
-  train_json = "/content/drive/MyDrive/Colab Notebooks/idris-teacher-assistant/anno/train_anno.json"
-  val_json = "/content/drive/MyDrive/Colab Notebooks/idris-teacher-assistant/anno/val_anno.json"
-  test_json = "/content/drive/MyDrive/Colab Notebooks/idris-teacher-assistant/anno/test_anno.json"
-
+  train_json = os.path.join(anno_dir, "train_anno.json")
+  val_json = os.path.join(anno_dir, "val_anno.json")
+  test_json = os.path.join(anno_dir, "test_anno.json")
+  
   DatasetCatalog.register("my_dataset_val", lambda: anno_from_json(val_json, data_dir))
   DatasetCatalog.register("my_dataset_train", lambda: anno_from_json(train_json, data_dir))
   DatasetCatalog.register("my_dataset_test", lambda: anno_from_json(test_json, data_dir))
@@ -170,4 +167,6 @@ def main():
     cv2_imshow(vis.get_image()[:, :, ::-1])
 
 if __name__ == "__main__":
-  main()
+  data_dir = "/content/drive/MyDrive/Colab Notebooks/idris-teacher-assistant/detection_data_with_qa_labels"
+  anno_dir = "/content/drive/MyDrive/Colab Notebooks/idris-teacher-assistant/anno"
+  main(data_dir, anno_dir)

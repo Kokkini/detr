@@ -36,6 +36,9 @@ MODEL:
 DATASETS:
   TRAIN: ("my_dataset_train",)
   TEST: ("my_dataset_val",)
+MY_ARGS:
+  DATA_DIR: "/content/drive/MyDrive/Colab Notebooks/idris-teacher-assistant/detection_data_with_qa_labels"
+  ANNO_DIR: "/content/drive/MyDrive/Colab Notebooks/idris-teacher-assistant/anno"
 OUTPUT_DIR: "./output"
 SOLVER:
   IMS_PER_BATCH: 4

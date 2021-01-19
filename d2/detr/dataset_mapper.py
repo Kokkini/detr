@@ -59,7 +59,7 @@ def build_transform_gen(cfg, is_train):
     if is_train:
         # tfm_gens.append(T.RandomFlip())
         tfm_gens.append(BiggerTextAugmentation())
-        tfm_gens.append(T.RandomRotation(angle=3))
+        tfm_gens.append(T.RandomRotation(angle=[-1,1]))
         tfm_gens.append(RandomNoiseAugmentation())
     tfm_gens.append(T.ResizeShortestEdge(min_size, max_size, sample_style))
     if is_train:

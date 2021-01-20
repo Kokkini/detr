@@ -115,7 +115,7 @@ def setup(args):
     cfg.freeze()
     default_setup(cfg, args)
     print("registering_dataset")
-    register_dataset.main(data_dir=cfg.MY_ARGS.DATA_DIR, anno_dir=cfg.MY_ARGS.ANNO_DIR)
+    register_dataset.main(data_dir=cfg.DATASETS.MY_DATA_DIR, anno_dir=cfg.DATASETS.MY_ANNO_DIR)
     return cfg
 
 

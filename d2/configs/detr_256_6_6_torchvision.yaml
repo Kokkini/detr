@@ -36,9 +36,8 @@ MODEL:
 DATASETS:
   TRAIN: ("my_dataset_train",)
   TEST: ("my_dataset_val",)
-MY_ARGS:
-  DATA_DIR: "/content/drive/MyDrive/Colab Notebooks/idris-teacher-assistant/vnRealisticData"
-  ANNO_DIR: "/content/drive/MyDrive/Colab Notebooks/idris-teacher-assistant/vnRealisticData_anno"
+  MY_DATA_DIR: "/content/drive/MyDrive/Colab Notebooks/idris-teacher-assistant/vnRealisticData" 
+  MY_ANNO_DIR: "/content/drive/MyDrive/Colab Notebooks/idris-teacher-assistant/vnRealisticData_anno"
 OUTPUT_DIR: "./output"
 SOLVER:
   IMS_PER_BATCH: 4

@@ -32,3 +32,6 @@ def add_detr_config(cfg):
 
     cfg.SOLVER.OPTIMIZER = "ADAMW"
     cfg.SOLVER.BACKBONE_MULTIPLIER = 0.1
+
+    cfg.DATASETS.MY_DATA_DIR = ""
+    cfg.DATASETS.MY_ANNO_DIR = ""

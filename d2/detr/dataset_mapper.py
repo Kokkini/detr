@@ -9,6 +9,8 @@ from detectron2.data import detection_utils as utils
 from detectron2.data import transforms as T
 from detectron2.data.transforms import TransformGen
 
+import cv2
+
 __all__ = ["DetrDatasetMapper"]
 
 

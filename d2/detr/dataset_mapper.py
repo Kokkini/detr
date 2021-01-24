@@ -39,6 +39,27 @@ class BiggerTextAugmentation(T.Augmentation):
     def get_transform(self, image):        
         return T.ColorTransform(self.my_op)
 
+
+class RandomCutoutAugmentation(T.Augmentation):
+    def __init__(self, max_num_box=20, max_box_size=100, prob=0.5):
+        super().__init__()
+        self.max_box_size = max_box_size
+        self.prob = prob
+        self.max_num_box = max_num_box
+
+    def my_op(self, img):
+        if np.random.uniform() > self.prob:
+            h, w = img.shape[:2]
+            num_rand = np.random.randint(self.max_num_box+1)
+            for num_cut in range(num_rand):
+                x_rand, y_rand = np.random.randint(0, w-self.max_box_size), np.random.randint(0, h-self.max_box_size)
+                w_rand, h_rand = np.random.randint(1, self.max_box_size+1), np.random.randint(1, self.max_box_size+1)
+                img[x_rand:x_rand+w_rand, y_rand:y_rand+h_rand, :] = 0
+        return np.asarray(img)
+
+    def get_transform(self, image):        
+        return T.ColorTransform(self.my_op)
+
 def build_transform_gen(cfg, is_train):
     """
     Create a list of :class:`TransformGen` from config.
@@ -63,10 +84,12 @@ def build_transform_gen(cfg, is_train):
         tfm_gens.append(BiggerTextAugmentation())
         tfm_gens.append(T.RandomRotation(angle=[-1,1]))
         tfm_gens.append(RandomNoiseAugmentation())
+        tfm_gens.append(RandomCutoutAugmentation(max_num_box=20, max_box_size=100, prob=0.5))
     tfm_gens.append(T.ResizeShortestEdge(min_size, max_size, sample_style))
     if is_train:
         logger.info("TransformGens used in training: " + str(tfm_gens))
-        print("TransformGens used in training: " + str(tfm_gens))
+    print(f"is_train: {is_train}")
+    print("TransformGens used in training: " + str(tfm_gens))
     return tfm_gens
 
 

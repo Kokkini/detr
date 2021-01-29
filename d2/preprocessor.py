@@ -29,7 +29,7 @@ class Preprocessor:
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img = self.remove_background(img)
         img = self.binarize_and_denoise(img)
-        img = self.deskew(img)
+        # img = self.deskew(img)
         img = imutils.resize(img, width = self.im_width)
         return img, img.copy()
 

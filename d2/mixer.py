@@ -12,12 +12,12 @@ def extract_bbox(bbox):
     return bbox[0], bbox[1], bbox[2], bbox[3]
 
 # %%
-def scale_bbox(bbox, scale=2):
+def scale_bbox(bbox, scale=1):
     # bbox: [l, t, r, b]
     return [i * scale for i in bbox]
 
 # %%
-def extend_bbox(img, bbox_lst, scale=2):
+def extend_bbox(img, bbox_lst, scale=1):
     # bbox_lst: array [x_topleft, y_topleft, x_botright, y_botright]
     bbox_extended = bbox_lst[:]
     bbox_extended[0] = 0
@@ -97,7 +97,7 @@ def round_bbox(bbox):
     return bbox_copy
 
 # %%
-def extract_label(questionAns_bbox_lst, scale=2):
+def extract_label(questionAns_bbox_lst, scale=1):
     question_label_bbox_lst = []
 
     for questionAns in questionAns_bbox_lst:
@@ -217,7 +217,7 @@ class Mixer:
     def __init__(self):
         return
     
-    def mix(self, img, bounding_box_dct, scale=2):
+    def mix(self, img, bounding_box_dct, scale=1):
         """mix the questions and the answers for each question
 
         Args:
